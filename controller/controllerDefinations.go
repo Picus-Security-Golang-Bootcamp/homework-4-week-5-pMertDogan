@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+
 //setup http controllers
 func SetupControllers() {
 	//curl -v "localhost:8080/ready"

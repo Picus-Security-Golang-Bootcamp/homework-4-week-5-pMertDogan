@@ -12,9 +12,19 @@ type BookRepository struct {
 	db *gorm.DB
 }
 
+//create a sigleton of the repo instance
+var singleton *BookRepository = nil
+
 //return our repo
-func NewBookRepository(db *gorm.DB) *BookRepository {
-	return &BookRepository{db: db}
+func BookRepoInit(db *gorm.DB) *BookRepository {
+	if singleton == nil {
+		singleton = &BookRepository{db}
+	}
+	return singleton
+}
+
+func Singleton () *BookRepository{
+	return singleton
 }
 
 //Migrate curent values if exist on current DB
@@ -70,6 +80,7 @@ func (c *BookRepository) GetByID(bookID string) (*Book, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+	
 
 	return book, nil
 }
@@ -120,7 +131,6 @@ func (r *BookRepository) GetAllBooks() (Books, error) {
 
 	return books, nil
 }
-
 
 // func (c *BookRepository) FindBooks(bookID string) (*Books, error) {
 // 	var book *Books
