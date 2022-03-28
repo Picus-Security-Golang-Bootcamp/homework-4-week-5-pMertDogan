@@ -32,17 +32,25 @@ type Book struct {
 	Author author.Author `gorm:"foreignKey:AuthorID;references:AuthorID"`
 }
 
-// fromJson
-func UnmarshalBook(data []byte) (Books, error) {
+// fromJson bookS
+func UnmarshalBooks(data []byte) (Books, error) {
 	var r Books
 	err := json.Unmarshal(data, &r)
 	return r, err
 }
 
+
 //toJson
 func (r *Books) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
+
+//Book toJson
+func (r *Book) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+
 
 //override fmt.print() presensation
 func (b Book) String() string {
@@ -60,7 +68,7 @@ func FromFile(locationOfFile string) (Books, error) {
 	}
 
 	//convert json to to authors
-	authors, err := UnmarshalBook(dat)
+	authors, err := UnmarshalBooks(dat)
 
 	if err != nil {
 		fmt.Print(string(dat))

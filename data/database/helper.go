@@ -9,8 +9,6 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
 
-
-
 //Simple helper file to test predefined operations by executing them :)
 
 func MigrateDatabase(authorRepository *author.AuthorRepository, bookRepository *book.BookRepository) {

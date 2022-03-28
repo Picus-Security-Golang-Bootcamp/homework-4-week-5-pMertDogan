@@ -12,6 +12,7 @@ func SetupControllers() {
 	http.HandleFunc("/statusCheck", StatusCheck)
 	//curl -v "localhost:8080/param?bookID=1"
 	http.HandleFunc("/book", GetBookByID)
+	http.HandleFunc("/bookWithAuthor", GetBookByIdIncludeAuthor)
 
 	// log.Println(http.ListenAndServeTLS(":8080", "certFile", "keyFile", nil))
 

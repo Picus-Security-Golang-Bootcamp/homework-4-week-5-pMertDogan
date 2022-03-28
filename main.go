@@ -22,6 +22,7 @@ func init() {
 }
 
 func main() {
+	//init database
 	db , err := database.ConnectPostgresDB()
 	if err != nil {
 		log.Fatal("cannot connect to database")

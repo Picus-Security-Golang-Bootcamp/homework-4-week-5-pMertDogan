@@ -15,15 +15,18 @@ type BookRepository struct {
 //create a sigleton of the repo instance
 var singleton *BookRepository = nil
 
-//return our repo
+//initilaze the repo with gorm db
 func BookRepoInit(db *gorm.DB) *BookRepository {
+
 	if singleton == nil {
 		singleton = &BookRepository{db}
 	}
 	return singleton
 }
 
-func Singleton () *BookRepository{
+//retunr same gorm db instance and we dont need pass it as parameter
+//maybe there is a better way to handle this case
+func Repo() *BookRepository {
 	return singleton
 }
 
@@ -44,6 +47,26 @@ func (c *BookRepository) InsertSampleData(books Books) {
 			FirstOrCreate(&book)
 	}
 
+}
+
+type BookAndAuthor struct {
+	ID       int
+	BookName string
+	Name     string
+	AuthorID int
+}
+
+func (b *BookRepository) GetBookByIdIncludeAuthor(id string) []BookAndAuthor {
+
+	var model []BookAndAuthor
+	b.db.
+		// First(&model).
+		Joins("left join authors on authors.author_id = books.author_id").
+		Where("books.id = ?", id).
+		Table("books").
+		Select("books.id ,books.book_name, authors.name, authors.author_id").
+		Scan(&model)
+	return model
 }
 
 func (b *BookRepository) GetBooksWithAuthors() (Books, error) {
@@ -75,12 +98,11 @@ func (c *BookRepository) FindByName(bookName string) (*Book, error) {
 
 func (c *BookRepository) GetByID(bookID string) (*Book, error) {
 	var book *Book
-	result := c.db.First(&book, "ID = ?", bookID)
+	result := c.db.First(&book, "ID = ?", bookID).Find(&book)
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	
 
 	return book, nil
 }
