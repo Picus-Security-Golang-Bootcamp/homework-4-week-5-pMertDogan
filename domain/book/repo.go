@@ -2,7 +2,7 @@ package book
 
 import (
 	// "errors"
-	"fmt"
+	// "fmt"
 
 	"gorm.io/gorm"
 )
@@ -86,9 +86,12 @@ func (b *BookRepository) GetBooksWithAuthors() (Books, error) {
 
 //Just type full book name
 func (c *BookRepository) FindByName(bookName string) (*Book, error) {
+	// var test struct{
+	// 	b
+	// }
 	var book *Book
 	//lke quert
-	result := c.db.First(&book, "Book_name like ?", "%"+fmt.Sprintf("%s", bookName)+"%")
+	result := c.db.First(&book, "Book_name like ?", "%"+ bookName +"%")
 	if result.Error != nil {
 		return nil, result.Error
 	}
