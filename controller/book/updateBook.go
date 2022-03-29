@@ -1,13 +1,12 @@
 package bookRest
 
 import (
-	
 	"log"
 	"net/http"
 
+	// "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
-
 
 /*
 ITS CASE SENSIITIVE
@@ -18,7 +17,7 @@ VERBOSE: received 369-byte response of content type application/json
 
 StatusCode        : 200
 StatusDescription : OK
-Content           : {"CreatedAt":"2022-03-25T23:46:42.744335+03:00","UpdatedAt":"2022-03-25T23:46:42.744335+03:00","DeletedAt":null,"ID":"1","AuthorID":"0","BookName":"Hobbit","NumberOfPages":665,"Sto 
+Content           : {"CreatedAt":"2022-03-25T23:46:42.744335+03:00","UpdatedAt":"2022-03-25T23:46:42.744335+03:00","DeletedAt":null,"ID":"1","AuthorID":"0","BookName":"Hobbit","NumberOfPages":665,"Sto
                     ckCount":14,"Price":...
 RawContent        : HTTP/1.1 200 OK
                     Content-Length: 369
@@ -41,6 +40,12 @@ PS C:\Projeler\homework-4-week-5-pMertDogan>
 //get book by id
 func UpdateBookWithID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	// var responseModel domain.APIStruct = domain.APIStruct{
+	// 	// Books:    nil,
+	// 	// Code:     0,
+	// 	// ErrorMsg: "",
+	// }
 
 	name := r.URL.Query().Get("name")
 	log.Println("Find Requested  name: " + name)

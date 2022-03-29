@@ -2,40 +2,85 @@ package bookRest
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
+
+type BookAndAuthorAPIStruct struct {
+	code     int             
+	errorMSG string          
+	book     book.BookAndAuthor 
+}
+
+func (r *BookAndAuthorAPIStruct) String() ([]byte, error) {
+	st, err :=  json.Marshal(r)
+	return st,err
+}
+
+func (r *BookAndAuthorAPIStruct) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
 
 //curl -v "http://localhost:8080/bookWithAuthor?bookID=1"
 //get book by id
 func GetBookByIdIncludeAuthor(w http.ResponseWriter, r *http.Request) {
+
+	var bookAndAuthorAPI BookAndAuthorAPIStruct = BookAndAuthorAPIStruct{}
+	fmt.Println(bookAndAuthorAPI)
 	w.Header().Set("Content-Type", "application/json")
 
 	bookdID := r.URL.Query().Get("bookID")
-	// authorInfo := r.URL.Query().Get("authorInfo")
 	log.Println("bookID: " + bookdID)
-	// log.Println("authorInfo: " + authorInfo)
 
-	b := book.Repo().GetBookByIdIncludeAuthor(bookdID)
+	if bookdID == "" {
+		bookAndAuthorAPI.errorMSG = "bookID is required"
+		exitWithError(bookAndAuthorAPI, w)
+		return
+	}
+
+	b, err := book.Repo().GetBookByIdIncludeAuthor(bookdID)
 
 	// b := book.Repo().GetByIdWithAuthorName(bookdID)
-	// fmt.Println(b)
-	if b[0].Name == "" {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("There is an error occured"))
-	}
-
-	w.WriteHeader(http.StatusOK)
-	v, err := json.Marshal(b[0])
+	fmt.Println(b)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Internal server error"))
-		log.Fatal(err)
-
+		bookAndAuthorAPI.errorMSG = "Book is not exist record not found"
+		exitWithError(bookAndAuthorAPI, w)
+		return
 	}
 
-	w.Write([]byte(v))
+	//its
+	bookAndAuthorAPI.book = b
+	
+	v, err := bookAndAuthorAPI.Marshal()
+	fmt.Println(v)
+	// v, err := json.Marshal(b[0])
+	if err != nil {
+		bookAndAuthorAPI.errorMSG = "Internal server error"
+		// w.WriteHeader(http.StatusInternalServerError)
+		// w.Write([]byte("Internal server error"))
+		// log.Fatal(err)
+		exitWithError(bookAndAuthorAPI, w)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	
+	w.Write(v)????
+	{2 The Unix Programming Environment Rob Pike 1}
+[123 125]
+}
+
+func exitWithError(bookAndAuthorAPI BookAndAuthorAPIStruct, w http.ResponseWriter) {
+	bookAndAuthorAPI.code = 1
+	// bookAndAuthorAPI.errorMSG = "query failed"
+	res, err := json.Marshal(bookAndAuthorAPI)
+	if err != nil {
+		fmt.Println(err)
+	}
+	http.Error(w, string(res), http.StatusBadGateway)
+	return
 }
 
 /*

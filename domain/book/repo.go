@@ -56,17 +56,21 @@ type BookAndAuthor struct {
 	AuthorID int
 }
 
-func (b *BookRepository) GetBookByIdIncludeAuthor(id string) []BookAndAuthor {
+func (b *BookRepository) GetBookByIdIncludeAuthor(id string) (BookAndAuthor, error) {
 
-	var model []BookAndAuthor
-	b.db.
+	var model BookAndAuthor
+	x := b.db.
 		// First(&model).
 		Joins("left join authors on authors.author_id = books.author_id").
 		Where("books.id = ?", id).
 		Table("books").
 		Select("books.id ,books.book_name, authors.name, authors.author_id").
 		Scan(&model)
-	return model
+
+	if x.Error != nil {
+		return model, x.Error
+	}
+	return model, nil
 }
 
 func (b *BookRepository) GetBooksWithAuthors() (Books, error) {
@@ -91,7 +95,7 @@ func (c *BookRepository) FindByName(bookName string) (*Book, error) {
 	// }
 	var book *Book
 	//lke quert
-	result := c.db.First(&book, "Book_name like ?", "%"+ bookName +"%")
+	result := c.db.First(&book, "Book_name like ?", "%"+bookName+"%")
 	if result.Error != nil {
 		return nil, result.Error
 	}

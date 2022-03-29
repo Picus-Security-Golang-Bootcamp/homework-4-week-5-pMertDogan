@@ -1,13 +1,13 @@
 package bookRest
 
 import (
-	
 	"log"
 	"net/http"
 
+	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain"
+	exitError "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
-
 
 /*
 ITS CASE SENSIITIVE
@@ -18,7 +18,7 @@ VERBOSE: received 369-byte response of content type application/json
 
 StatusCode        : 200
 StatusDescription : OK
-Content           : {"CreatedAt":"2022-03-25T23:46:42.744335+03:00","UpdatedAt":"2022-03-25T23:46:42.744335+03:00","DeletedAt":null,"ID":"1","AuthorID":"0","BookName":"Hobbit","NumberOfPages":665,"Sto 
+Content           : {"CreatedAt":"2022-03-25T23:46:42.744335+03:00","UpdatedAt":"2022-03-25T23:46:42.744335+03:00","DeletedAt":null,"ID":"1","AuthorID":"0","BookName":"Hobbit","NumberOfPages":665,"Sto
                     ckCount":14,"Price":...
 RawContent        : HTTP/1.1 200 OK
                     Content-Length: 369
@@ -42,29 +42,46 @@ PS C:\Projeler\homework-4-week-5-pMertDogan>
 func FindBookByNameWithoutAuthor(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
+	//https://stackoverflow.com/questions/49461354/go-vet-composite-literal-uses-unkeyed-fields-with-embedded-types
+	var responseModel domain.APIStruct = domain.APIStruct{
+		// Books:    nil,
+		// Code:     0,
+		// ErrorMsg: "",
+	}
+
 	name := r.URL.Query().Get("name")
+
 	log.Println("Find Requested  name: " + name)
 
 	b, err := book.Repo().FindByName(name)
-
+	//check is we can get book without error or not
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Book is not exist"))
-		
+		responseModel.ErrorMsg = "Book is not exist " + err.Error()
+		//we can type domain.ExitWithError(&responseModel, w, http.StatusInternalServerError)
+		exitError.ExitWithError(&responseModel, w, http.StatusInternalServerError)
+		return
+		// res ,_ := responseModel.String()
+		// http.Error(w, string(res), http.StatusBadRequest)
+		// return
+		// w.Write([]byte())
 	}
+	responseModel.Books = []book.Book{*b}
+	//convert struct to json
+	json, err := responseModel.Marshal()
 
+	//maybe we dont need it ?
+	if err != nil {
+		//exit with error flow
+		responseModel.ErrorMsg = "Internal server error \n" + err.Error()
+		exitError.ExitWithError(&responseModel, w, http.StatusInternalServerError)
+		return
+		//return to avoid below command should not be forgetted ! Maybe we need use another logic
+		//alternative we can use if else :)
+
+	}
 	w.WriteHeader(http.StatusOK)
-	v, err := b.Marshal()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Internal server error"))
-		log.Fatal(err)
-
-	}
-
-	w.Write([]byte(v))
+	w.Write([]byte(json))
 }
-
 
 /*
 
@@ -75,7 +92,7 @@ VERBOSE: received 369-byte response of content type application/json
 
 StatusCode        : 200
 StatusDescription : OK
-Content           : {"CreatedAt":"2022-03-25T23:46:42.744335+03:00","UpdatedAt":"2022-03-25T23:46:42.744335+03:00","DeletedAt":null,"ID":"1","AuthorID":"0","BookName":"Hobbit","NumberOfPages":665,"Sto 
+Content           : {"CreatedAt":"2022-03-25T23:46:42.744335+03:00","UpdatedAt":"2022-03-25T23:46:42.744335+03:00","DeletedAt":null,"ID":"1","AuthorID":"0","BookName":"Hobbit","NumberOfPages":665,"Sto
                     ckCount":14,"Price":...
 RawContent        : HTTP/1.1 200 OK
                     Content-Length: 369
