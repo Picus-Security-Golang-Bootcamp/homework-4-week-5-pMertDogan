@@ -90,12 +90,13 @@ func (b *BookRepository) GetBooksWithAuthors() (Books, error) {
 
 //Just type full book name
 func (c *BookRepository) FindByName(bookName string) (*Book, error) {
-	// var test struct{
-	// 	b
-	// }
+
 	var book *Book
-	//lke quert
+	//lke query without book information
 	result := c.db.First(&book, "Book_name like ?", "%"+bookName+"%")
+
+	// result := c.db.Select("*").Joins("authors", c.db.Where("Book_name like ?", "%"+bookName+"%").Model(&book))
+
 	if result.Error != nil {
 		return nil, result.Error
 	}

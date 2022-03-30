@@ -7,7 +7,7 @@ import (
 )
 
 //dont forget call return to exit flow
-func ExitWithError(model *APIStruct, w http.ResponseWriter, code int) {
+func ExitWithError(model *APIStructBook, w http.ResponseWriter, code int) {
 	//print error to log
 	fmt.Println(model.ErrorMsg)
 	//set error code to one

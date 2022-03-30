@@ -13,7 +13,7 @@ import (
 func GetBookByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var responseModel domain.APIStruct = domain.APIStruct{}
+	var responseModel domain.APIStructBook = domain.APIStructBook{}
 
 	bookdID := r.URL.Query().Get("bookID")
 	log.Println("bookID: " + bookdID)

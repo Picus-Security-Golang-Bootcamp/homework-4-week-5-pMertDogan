@@ -12,9 +12,18 @@ type AuthorRepository struct {
 	db *gorm.DB
 }
 
+var singleton *AuthorRepository = nil
+
 //return our repo
-func NewAuthorRepository(db *gorm.DB) *AuthorRepository {
-	return &AuthorRepository{db: db}
+func AuthorRepoInit(db *gorm.DB) *AuthorRepository {
+	if singleton == nil {
+		singleton = &AuthorRepository{db}
+	}
+	return singleton
+}
+
+func Repo() *AuthorRepository {
+	return singleton
 }
 
 //Migrate curent values if exist on current DB
@@ -64,8 +73,6 @@ func (c *AuthorRepository) GetByID(authorID string) (*Author, error) {
 func (b *AuthorRepository) GetAuthorsWithBooks() (Authors, error) {
 	var authors Authors
 	//get author books with join query
-
-	
 
 	//&authors cause returned value contain only authors variables.
 	result := b.db.Joins("JOIN books ON books.author_ID = authors.Author_ID ").Find(&authors)

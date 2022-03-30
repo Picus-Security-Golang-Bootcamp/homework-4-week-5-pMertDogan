@@ -16,19 +16,19 @@ import (
 */
 
 
-type APIStruct struct {
+type APIStructBook struct {
 	Code int
 	ErrorMsg string
 	Books book.Books
 }
 
-func (r *APIStruct) Marshal() ([]byte, error) {
+func (r *APIStructBook) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
 
 //Its override default String func maybe change name to ToString
-func (r *APIStruct) String() ([]byte, error) {
+func (r *APIStructBook) String() ([]byte, error) {
 	st, err :=  json.Marshal(r)
 	return st,err
 }

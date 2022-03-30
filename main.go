@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	controller "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/controller"
 	database "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/data/database"
+	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/author"
 	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
 
@@ -29,7 +30,7 @@ func main() {
 	}
 	//init book repo
 	book.BookRepoInit(db)
-
+	author.AuthorRepoInit(db)
+	//setup the endpoint controllers
 	controller.SetupControllers()
-
 }

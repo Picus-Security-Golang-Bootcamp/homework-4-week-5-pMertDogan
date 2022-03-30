@@ -10,9 +10,9 @@ import (
 )
 
 type BookAndAuthorAPIStruct struct {
-	code     int             
-	errorMSG string          
-	book     book.BookAndAuthor 
+	Code     int             
+	ErrorMSG string          
+	Book     book.BookAndAuthor 
 }
 
 func (r *BookAndAuthorAPIStruct) String() ([]byte, error) {
@@ -29,51 +29,41 @@ func (r *BookAndAuthorAPIStruct) Marshal() ([]byte, error) {
 func GetBookByIdIncludeAuthor(w http.ResponseWriter, r *http.Request) {
 
 	var bookAndAuthorAPI BookAndAuthorAPIStruct = BookAndAuthorAPIStruct{}
-	fmt.Println(bookAndAuthorAPI)
 	w.Header().Set("Content-Type", "application/json")
 
 	bookdID := r.URL.Query().Get("bookID")
 	log.Println("bookID: " + bookdID)
 
 	if bookdID == "" {
-		bookAndAuthorAPI.errorMSG = "bookID is required"
+		bookAndAuthorAPI.ErrorMSG = "bookID is required"
 		exitWithError(bookAndAuthorAPI, w)
 		return
 	}
 
 	b, err := book.Repo().GetBookByIdIncludeAuthor(bookdID)
 
-	// b := book.Repo().GetByIdWithAuthorName(bookdID)
-	fmt.Println(b)
+	// {2 The Unix Programming Environment Rob Pike 1}
 	if err != nil {
-		bookAndAuthorAPI.errorMSG = "Book is not exist record not found"
+		bookAndAuthorAPI.ErrorMSG = "Book is not exist record not found"
 		exitWithError(bookAndAuthorAPI, w)
 		return
 	}
 
 	//its
-	bookAndAuthorAPI.book = b
-	
+	bookAndAuthorAPI.Book = b
 	v, err := bookAndAuthorAPI.Marshal()
-	fmt.Println(v)
-	// v, err := json.Marshal(b[0])
 	if err != nil {
-		bookAndAuthorAPI.errorMSG = "Internal server error"
-		// w.WriteHeader(http.StatusInternalServerError)
-		// w.Write([]byte("Internal server error"))
-		// log.Fatal(err)
+		bookAndAuthorAPI.ErrorMSG = "Internal server error"
 		exitWithError(bookAndAuthorAPI, w)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	
-	w.Write(v)????
-	{2 The Unix Programming Environment Rob Pike 1}
-[123 125]
+	w.Write([]byte(v))
 }
 
 func exitWithError(bookAndAuthorAPI BookAndAuthorAPIStruct, w http.ResponseWriter) {
-	bookAndAuthorAPI.code = 1
+	bookAndAuthorAPI.Code = 1
 	// bookAndAuthorAPI.errorMSG = "query failed"
 	res, err := json.Marshal(bookAndAuthorAPI)
 	if err != nil {
