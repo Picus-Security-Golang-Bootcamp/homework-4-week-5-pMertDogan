@@ -60,9 +60,6 @@ func FromFile(locationOfFile string) (Authors,error){
 //    bytes, err = authors.Marshal()
 
 
-
-
-
 //fromJson
 func UnmarshalAuthors(data []byte) (Authors, error) {
 	var r Authors
@@ -71,6 +68,10 @@ func UnmarshalAuthors(data []byte) (Authors, error) {
 }
 //toJson
 func (r *Authors) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+//toJSon
+func (r *Author) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 

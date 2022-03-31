@@ -1,17 +1,17 @@
 package controllers
 
 import (
-	// "encoding/json"
 	"log"
 	"net/http"
 
+	authorRest "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/controller/author"
 	bookRest "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/controller/book"
-	// "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain"
-	// "github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
 
 //setup http controllers
 func SetupControllers() {
+
+	//Without gorilla Mux
 	//curl -v "http://localhost:8080/statusCheck"
 	http.HandleFunc("/statusCheck", StatusCheck)
 	//curl -v "http://localhost:8080/book?bookID=1"
@@ -25,11 +25,10 @@ func SetupControllers() {
 	http.HandleFunc("/book/", bookRest.FindBookByNameWithoutAuthor)
 
 	// http.HandleFunc("/book", bookRest.UpdateBookWithID) NOT IMPLEMENTED YET
+	//**** Author Handles it with Gorilla Mux
+	authorRest.AuthorHandler()
+	
 	// log.Println(http.ListenAndServeTLS(":8080", "certFile", "keyFile", nil))
-
-	http.HandleFunc("/author/", bookRest.FindBookByNameWithoutAuthor)
-
-
 	log.Println(http.ListenAndServe(":8080", nil))
 }
 
@@ -38,8 +37,6 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Method)
 	w.Header().Set("Content-Type", "application/json")
 
-
-
 	//redirect to method
 	switch r.Method {
 	case http.MethodGet:
@@ -47,9 +44,8 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 		bookRest.GetBookByID(w, r)
 		return
 	case http.MethodPost:
-		
 
-		bookRest.UpdateBookQuantity(w,r)
+		bookRest.UpdateBookQuantity(w, r)
 		return
 	default:
 		http.Error(w, "Invalid request", http.StatusBadRequest)
