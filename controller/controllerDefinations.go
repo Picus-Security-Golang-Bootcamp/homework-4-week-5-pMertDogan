@@ -23,11 +23,12 @@ func SetupControllers() {
 	http.HandleFunc("/book/find", bookRest.FindBookByNameWithoutAuthor)
 	//curl -v "http://localhost:8080/book" POST
 	http.HandleFunc("/book/", bookRest.FindBookByNameWithoutAuthor)
+	http.HandleFunc("/book/enable", bookRest.EnableBook)
 
 	// http.HandleFunc("/book", bookRest.UpdateBookWithID) NOT IMPLEMENTED YET
 	//**** Author Handles it with Gorilla Mux
 	authorRest.AuthorHandler()
-	
+
 	// log.Println(http.ListenAndServeTLS(":8080", "certFile", "keyFile", nil))
 	log.Println(http.ListenAndServe(":8080", nil))
 }
@@ -44,8 +45,17 @@ func bookHandler(w http.ResponseWriter, r *http.Request) {
 		bookRest.GetBookByID(w, r)
 		return
 	case http.MethodPost:
+		bookdID := r.URL.Query().Get("bookID")
+		if bookdID != "" {
+			bookRest.UpdateBookQuantity(w, r)
+		}else{
+			//somethink like
+			// bookRest.UpdateBook(w, r)
+		}
+		return
 
-		bookRest.UpdateBookQuantity(w, r)
+	case http.MethodDelete:
+		bookRest.SoftDelete(w, r)
 		return
 	default:
 		http.Error(w, "Invalid request", http.StatusBadRequest)

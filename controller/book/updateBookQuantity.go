@@ -10,6 +10,7 @@ import (
 	"github.com/pMertDogan/picusGoBackend--Patika/picusWeek5/domain/book"
 )
 
+//update book quantity
 func UpdateBookQuantity(w http.ResponseWriter, r *http.Request) {
 
 	var responseModel domain.APIStructBook = domain.APIStructBook{}

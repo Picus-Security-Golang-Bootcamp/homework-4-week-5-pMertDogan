@@ -1,8 +1,7 @@
 package book
 
 import (
-	// "errors"
-	// "fmt"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -104,6 +103,7 @@ func (c *BookRepository) FindByName(bookName string) (*Book, error) {
 	return book, nil
 }
 
+//its respect soft delete querys
 func (c *BookRepository) GetByID(bookID string) (*Book, error) {
 	var book *Book
 	result := c.db.First(&book, "ID = ?", bookID).Find(&book)
@@ -115,9 +115,43 @@ func (c *BookRepository) GetByID(bookID string) (*Book, error) {
 	return book, nil
 }
 
+//its not respect soft delete querys. Can be used to get soft deleteds
+func (c *BookRepository) GetByIDIgnoreSoftDelete(bookID string) (*Book, error) {
+	var book *Book
+
+	// result := c.db.First(&book, "ID = ?", bookID).Find(&book)
+	//https://gorm.io/docs/delete.html#Find-soft-deleted-records
+	result := c.db.Unscoped().Where("id = ?", bookID).Find(&book)
+	// SELECT * FROM books WHERE id = <bookID>;
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return book, nil
+}
+
+//set delete_At to null do remove sof delete flag
+func (c *BookRepository) EnableBook(bookID string) error {
+	book := Book{ID: bookID}
+	// result := c.db.Model(&book).Where("id = ?", bookID).Update("deleted_at", nil)
+	//https://gorm.io/docs/update.html#Update-single-column
+	// 	https://stackoverflow.com/questions/69475802/how-can-i-restore-data-that-i-soft-deleted-with-gorm-deletedat
+	// result := c.db.Model(&book).Update("deleted_at", nil)
+	fmt.Println("enable works :) ")
+		result := c.db.Model(book).Update("deleted_at",gorm.Expr("NULL"))
+	// SELECT * FROM books WHERE id = <bookID>;
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
 func (b *BookRepository) UpdateBookQuantity(bookID, quantity string) error {
 	var book *Book
 	// result := b.db.Update(&book, "stock_count", quantity).Where("id = ?", bookID)
+
 	result := b.db.Model(&book).Where("ID = ?", bookID).Update("stock_count", quantity)
 
 	if result.Error != nil {

@@ -19,6 +19,7 @@ func AuthorHandler() {
 	//Do not use 
 	//authorSlash.HandleFunc("/{authorID}", GetAuthorByID) cause its only accept request with / not handle the author should be author/
 	authorSlash.HandleFunc("", getHandler).Methods(http.MethodGet)
+	authorSlash.HandleFunc("", getHandler).Methods(http.MethodPost)
 	// authorSlash.HandleFunc("/", RootHandler).Methods(http.MethodPost)
 
 	// SAME AS r.HandleFunc("/author/{authorID}", GetAuthorByID)
@@ -33,6 +34,19 @@ func AuthorHandler() {
 func getHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("getHandler")
+	
+
+	if searchText := r.URL.Query().Get("searchText"); searchText != "" {
+		fmt.Println("searchText  is : " + searchText)
+		FindAuthorByName(w, r)
+	}
+
+
+}
+
+func postHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("postHandler")
 	
 
 	if searchText := r.URL.Query().Get("searchText"); searchText != "" {
