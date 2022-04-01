@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -9,8 +8,8 @@ import (
 func AdminHandler(r *mux.Router) {
 	// create mux
 	// r.Use(AdminMiddleware)			 
-	http.HandleFunc("/admin/drop", DropTables)
-	http.HandleFunc("/admin/init", InitDatabase)
+	r.HandleFunc("/admin/drop", DropTables)
+	r.HandleFunc("/admin/init", InitDatabase)
 
 }
 

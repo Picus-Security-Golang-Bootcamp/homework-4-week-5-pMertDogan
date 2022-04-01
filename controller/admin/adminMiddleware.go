@@ -12,11 +12,10 @@ func AdminMiddleware(next http.Handler) http.Handler {
 		fmt.Println("AdminMiddleware")
 		token := r.Header.Get("Authorization")
 		if strings.HasPrefix(r.URL.Path, "/admin/") {
-			if token == "PleaseTypeTokenHashMashasdasHere" {
+			if token != "PleaseTypeTokenHashMashasdasHere" {
 				next.ServeHTTP(w, r)
 				fmt.Println("token is valid")
 			} else {
-
 				fmt.Println("token is not valid")
 				http.Error(w, "Token not found or invalid", http.StatusUnauthorized)
 			}

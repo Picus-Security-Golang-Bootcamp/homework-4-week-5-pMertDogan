@@ -8,7 +8,6 @@ import (
 )
 
 func AuthorHandler(r *mux.Router) {
-	// create mux
 	
 
 	// r.HandleFunc("/author", authorRest.AuthorHandler)

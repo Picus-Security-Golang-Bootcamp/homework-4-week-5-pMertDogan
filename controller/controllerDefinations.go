@@ -34,13 +34,24 @@ func SetupControllers() {
 	http.HandleFunc("/book/", bookRest.FindBookByNameWithoutAuthor)
 	http.HandleFunc("/book/enable", bookRest.EnableBook)
 
-	// http.HandleFunc("/book", bookRest.UpdateBookWithID) NOT IMPLEMENTED YET
+	//curl -v "http://localhost:8080/statusCheck"
+	r.HandleFunc("/statusCheck", StatusCheck)
+	//curl -v "http://localhost:8080/book?bookID=1"
+	r.HandleFunc("/book", bookHandler)
+	//curl -v "http://localhost:8080/bookWithAuthor?bookID=1"
+	//Maybe we can change it to /book and change the handling method use path variable like /book?author=true
+	r.HandleFunc("/bookWithAuthor", bookRest.GetBookByIdIncludeAuthor)
+	//curl -v "http://localhost:8080/book/find?name=Hob"
+	r.HandleFunc("/book/find", bookRest.FindBookByNameWithoutAuthor)
+	//curl -v "http://localhost:8080/book" POST
+	r.HandleFunc("/book/enable", bookRest.EnableBook)
 
+	// http.HandleFunc("/book", bookRest.UpdateBookWithID) NOT IMPLEMENTED YET
 	//******Middleware
-	
-	r.Use(admin.AdminLogger)
+
+	// r.Use(admin.AdminLogger)
 	//add admin middleware
-	r.Use(admin.AdminMiddleware)
+	// r.Use(admin.AdminMiddleware)
 
 	//**** Author Handles it with Gorilla Mux
 	//setup admin routes
@@ -52,7 +63,6 @@ func SetupControllers() {
 	//register gorilla mux
 	http.Handle("/", r)
 
-
 	// srv := &http.Server{
 	// 	Addr:         "0.0.0.0:8080",
 	// 	WriteTimeout: time.Second * 15,
@@ -63,11 +73,9 @@ func SetupControllers() {
 	// log.Println(srv.ListenAndServe())
 
 	// log.Println(http.ListenAndServeTLS(":8080", "certFile", "keyFile", nil))
-	log.Println(http.ListenAndServe(":8080", nil))
+	log.Println(http.ListenAndServe(":8080", r))
 
 }
-
-
 
 func bookHandler(w http.ResponseWriter, r *http.Request) {
 	// var responseModel domain.APIStruct = domain.APIStruct{}
