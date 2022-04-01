@@ -133,13 +133,23 @@ func (c *BookRepository) GetByIDIgnoreSoftDelete(bookID string) (*Book, error) {
 
 //set delete_At to null do remove sof delete flag
 func (c *BookRepository) EnableBook(bookID string) error {
-	book := Book{ID: bookID}
+	var book *Book
 	// result := c.db.Model(&book).Where("id = ?", bookID).Update("deleted_at", nil)
 	//https://gorm.io/docs/update.html#Update-single-column
 	// 	https://stackoverflow.com/questions/69475802/how-can-i-restore-data-that-i-soft-deleted-with-gorm-deletedat
-	// result := c.db.Model(&book).Update("deleted_at", nil)
+	// https://github.com/go-gorm/gorm/issues/4855
 	fmt.Println("enable works :) ")
-		result := c.db.Model(book).Update("deleted_at",gorm.Expr("NULL"))
+
+	//Unscoped is added for change soft delete flag to null
+	//select is added for only update  deleted_at column 
+	//gorm is boilerplate than raw sql lol :)
+	result := c.db.Model(&book).Unscoped().Select("deleted_at").Where("id = ?", bookID).Update("deleted_at", nil)
+
+
+
+	// result := c.db.Model(&book).Where("ID = ?", bookID).Update("deleted_at", nil)
+	// result := c.db.Model(& Book{ID: bookID}).Update("deleted_at", nil)
+	// result := c.db.Model(Book{ID: bookID}).Update("deleted_at", gorm.Expr("NULL"))
 	// SELECT * FROM books WHERE id = <bookID>;
 	if result.Error != nil {
 		return result.Error

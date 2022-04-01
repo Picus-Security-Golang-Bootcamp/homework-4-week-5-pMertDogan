@@ -36,7 +36,7 @@ func EnableBook(w http.ResponseWriter, r *http.Request) {
 	//get book
 	b,err := book.Repo().GetByID(bookId)
 	if err != nil {
-		responseModel.ErrorMsg = "Book is not exist " + err.Error()
+		responseModel.ErrorMsg = "Book is not exist :/ \n " + err.Error()
 		exitError.ExitWithError(&responseModel, w, http.StatusInternalServerError)
 		return
 	}
