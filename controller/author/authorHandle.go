@@ -7,9 +7,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AuthorHandler() {
+func AuthorHandler(r *mux.Router) {
 	// create mux
-	r := mux.NewRouter()
+	
 
 	// r.HandleFunc("/author", authorRest.AuthorHandler)
 	authorSlash := r.PathPrefix("/author").Subrouter()
@@ -24,8 +24,8 @@ func AuthorHandler() {
 
 	// SAME AS r.HandleFunc("/author/{authorID}", GetAuthorByID)
 
-	//register mux
-	http.Handle("/", r)
+	// //register mux
+	// http.Handle("/", r)
 
 }
 

@@ -28,7 +28,7 @@ func DropTables(authorRepository *author.AuthorRepository, bookRepository *book.
 		return err
 	}
 	fmt.Println("Succesfuly dropped tables")
-	os.Exit(0)
+	// os.Exit(0)
 	return nil
 
 }
